@@ -74,21 +74,18 @@
 #          Value to set for the domain / type
 #
 define ulimit::rule (
-  String $ensure         = 'present',
-  $content               = undef,
-  Integer $priority      = 80,
-  $source                = undef,
-  $target                = undef,
-  String  $ulimit_domain = '*',
-  $ulimit_type           = undef,
-  $ulimit_item           = undef,
-  $ulimit_value          = undef,
-)
-{
-  validate_legacy('String', 'validate_re', $ensure, ['^present', '^absent'])
-
-  require ::ulimit
-  include ::ulimit::config
+  Enum['present', 'absent'] $ensure   = 'present',
+  Optional[String] $content           = undef,
+  Integer $priority                   = 80,
+  Optional[String] $source            = undef,
+  Optional[String] $target            = undef,
+  String  $ulimit_domain              = '*',
+  Optional[Variant[String, Array[String]]] $ulimit_type = undef,
+  Optional[Variant[String, Array[String]]] $ulimit_item = undef,
+  Optional[Variant[String, Integer]] $ulimit_value = undef,
+) {
+  require ulimit
+  include ulimit::config
 
   if ($content == undef and $source == undef and $target == undef) {
     if ($ulimit_type == undef or $ulimit_item == undef or $ulimit_value == undef) {
@@ -117,11 +114,11 @@ define ulimit::rule (
     default => $content,
   }
 
-  file { "${::ulimit::config_dir}/${priority}_${name}.conf":
+  file { "${ulimit::config_dir}/${priority}_${name}.conf":
     ensure  => $ensure,
     content => $real_content,
     source  => $source,
-    require => File[$::ulimit::config_dir],
+    require => File[$ulimit::config_dir],
   }
 
 }

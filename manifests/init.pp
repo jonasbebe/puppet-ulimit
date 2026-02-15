@@ -31,9 +31,7 @@ class ulimit (
   String  $config_user         = $ulimit::params::config_user,
   Boolean $use_default_ulimits = $ulimit::params::use_default_ulimits,
   Boolean $purge               = $ulimit::params::purge,
-)
-inherits ::ulimit::params
-{
+) inherits ulimit::params {
   $default_ulimits = $ulimit::params::default_ulimits
-  include ::ulimit::config
+  include ulimit::config
 }
